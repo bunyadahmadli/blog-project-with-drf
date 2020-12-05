@@ -4,7 +4,7 @@ from post.models import Post
 from django.utils import timezone
 
 class Comment(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='post')
     content = models.TextField()
     parent = models.ForeignKey('self',on_delete=models.CASCADE,null=True,blank=True,related_name='replies')
@@ -25,8 +25,8 @@ class Comment(models.Model):
         return super(Comment,self).save(*args,**kwargs)
     
     def children(self):
-        return Comment.object.filter(parent=self)
+        return Comment.objects.filter(parent=self)
 
     @property
     def any_children(self):
-        return Comment.objects.filter(parent= self).exists()
+        return Comment.objects.filter(parent = self).exists()
