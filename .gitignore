@@ -1,0 +1,16 @@
+pgdb/
+.idea/
+media/
+.venv
+db.sqlite3
+*.pyc
+localhost/
+dr.agro-front/
+*.sql
+*.save
+*.swp
+locale/
+*.tar.gz
+.vscode/
+venv
+venv/
