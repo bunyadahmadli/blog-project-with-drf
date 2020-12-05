@@ -2,6 +2,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView,UpdateAPIView,Des
 from .models import Comment
 from .serializers import CommentCreateSerializer, CommentListSerializer, CommentUpdateDeleteSerializer
 from .permissions import IsOwner
+from .pagenations import CommentPagination
 # Create your views here.
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
@@ -11,15 +12,21 @@ class CommentCreateAPIView(CreateAPIView):
         serializer.save(user =self.request.user)
 
 class CommentListAPIView(ListAPIView):
-    queryset =Comment.objects.all()
     serializer_class = CommentListSerializer
+    pagination_class = CommentPagination
     def get_queryset(self):
-        return Comment.objects.filter(parent=None)
+        queryset=Comment.objects.filter(parent=None)
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(post=query )
+        return queryset
 
 
 class CommentUpdateAPIView(UpdateAPIView):
     queryset=Comment.objects.all()
     serializer_class = CommentUpdateDeleteSerializer
+    lookup_field= 'pk'
+    permission_classes = [IsOwner]
 
 class CommentDeletePIView(DestroyAPIView):
     queryset=Comment.objects.all()
