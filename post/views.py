@@ -4,12 +4,14 @@ from post.models import Post
 from .serializers import PostSerializer,PostCreateUpdateSerializer
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from .permissions import IsOwner
-from rest_framework.filters import SearchFilter
+from .paginations import PostPagination
+from rest_framework.filters import SearchFilter,OrderingFilter
 
 class PostListAPIView(ListAPIView):
     serializer_class = PostSerializer
-    filter_backends =[SearchFilter]
-    search_fields =['title']
+    filter_backends =[SearchFilter,OrderingFilter]
+    search_fields =['title','content']
+    pagination_class =PostPagination
 
     def get_queryset(self):
         queryset = Post.objects.filter(draft =False)
