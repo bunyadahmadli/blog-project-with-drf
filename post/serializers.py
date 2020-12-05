@@ -6,10 +6,12 @@ class PostSerializer(serializers.ModelSerializer):
         view_name='post:detail',
         lookup_field='slug'
     )
+
+    username = serializers.SerializerMethodField() 
     class Meta:
         model =Post
         fields =[
-            'user',
+            'username',
             'title', 
             'content',
             'image',
@@ -17,7 +19,8 @@ class PostSerializer(serializers.ModelSerializer):
             'created',
             'modified_by'
         ]
-
+    def get_username(self,obj):
+        return obj.user.username
 
 class PostCreateUpdateSerializer(serializers.ModelSerializer):
    
