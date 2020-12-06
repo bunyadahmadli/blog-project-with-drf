@@ -1,4 +1,5 @@
-from rest_framework.generics import CreateAPIView, ListAPIView,UpdateAPIView,DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView,UpdateAPIView,DestroyAPIView,RetrieveUpdateAPIView
+from rest_framework.mixins import UpdateModelMixin,DestroyModelMixin
 from .models import Comment
 from .serializers import CommentCreateSerializer, CommentListSerializer, CommentUpdateDeleteSerializer
 from .permissions import IsOwner
@@ -22,11 +23,14 @@ class CommentListAPIView(ListAPIView):
         return queryset
 
 
-class CommentUpdateAPIView(UpdateAPIView):
+class CommentUpdateAPIView(DestroyModelMixin,UpdateAPIView,RetrieveUpdateAPIView):
     queryset=Comment.objects.all()
     serializer_class = CommentUpdateDeleteSerializer
     lookup_field= 'pk'
     permission_classes = [IsOwner]
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request,*args,**kwargs)
 
 class CommentDeletePIView(DestroyAPIView):
     queryset=Comment.objects.all()
