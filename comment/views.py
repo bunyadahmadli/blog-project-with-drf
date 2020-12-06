@@ -3,7 +3,7 @@ from rest_framework.mixins import UpdateModelMixin,DestroyModelMixin
 from .models import Comment
 from .serializers import CommentCreateSerializer, CommentListSerializer, CommentUpdateDeleteSerializer
 from .permissions import IsOwner
-from .pagenations import CommentPagination
+from .paginations import CommentPagination
 # Create your views here.
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
