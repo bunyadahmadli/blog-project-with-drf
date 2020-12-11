@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from .models import Favourite
+
 class FavouriteListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourite
