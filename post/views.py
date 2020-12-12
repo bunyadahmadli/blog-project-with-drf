@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from .permissions import IsOwner
 from .paginations import PostPagination
 from rest_framework.filters import SearchFilter,OrderingFilter
-
+from account.throttles import RegisterThrottle
 class PostListAPIView(ListAPIView):
     serializer_class = PostSerializer
     filter_backends =[SearchFilter,OrderingFilter]
@@ -38,6 +38,7 @@ class PostUpdateAPIView(RetrieveUpdateAPIView):
         serializer.save(modified_by =self.request.user)
 
 class PostCreateAPIView(CreateAPIView):
+    throttle_classes = [RegisterThrottle,]
     queryset= Post.objects.all()
     serializer_class =PostCreateUpdateSerializer
     permission_classes = [IsOwner]

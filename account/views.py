@@ -1,10 +1,13 @@
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import RetrieveUpdateAPIView,get_object_or_404
+from rest_framework.generics import RetrieveUpdateAPIView,get_object_or_404,CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from .serializers import UserSerializer,ChangePassworSerializer
+from .serializers import UserSerializer,ChangePassworSerializer, RegisterSerializer
+from django.contrib.auth import update_session_auth_hash
+from .permissions import NotAuthenticated
+from .throttles import RegisterThrottle
 
 # Create your views here.
 
@@ -22,7 +25,7 @@ class ProfileView(RetrieveUpdateAPIView):
         serializer.save(user =self.request.user)
 
 
-class UpdatePassword(APIView):
+class UpdatePasswordView(APIView):
     permission_classes=(IsAuthenticated,)
 
     def get_object(self):
@@ -43,5 +46,15 @@ class UpdatePassword(APIView):
             
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
+            update_session_auth_hash(request,self.object)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+#create user
+
+class CreateUserView(CreateAPIView):
+    throttle_classes = [RegisterThrottle,]
+    model = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes =[NotAuthenticated]
