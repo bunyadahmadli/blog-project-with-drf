@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+from django.contrib.auth.models import User
+import json
 
 class UserRegistrationTestCase(APITestCase):
     url = reverse("account:register")
@@ -73,3 +73,26 @@ class UserRegistrationTestCase(APITestCase):
         response2 =self.client.get(self.url)
         
         self.assertEqual(403,response2.status_code)
+
+class UserLogin(APITestCase):
+    
+    url_login = reverse("token_obtain_pair")
+
+    def setUp(self):
+        self.username = "bunyadtest"
+        self.password = "sifre1342"
+        self.user = User.objects.create_user(username =self.username,password = self.password)
+
+    def test_user_token(self):
+        response = self.client.post(self.url_login,{"username":"bunyadtest","password":"sifre1342"})
+        self.assertEqual(200,response.status_code)
+        self.assertTrue("access" in json.loads(response.content))
+
+    def test_user_invalid_data(self):
+        response = self.client.post(self.url_login,{"username":"asfasfafa","password":"sifre1342"})
+        self.assertEqual(401,response.status_code)
+
+
+    def test_user_empty_data(self):
+        response = self.client.post(self.url_login,{"username":"","password":""})
+        self.assertEqual(400,response.status_code)

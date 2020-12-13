@@ -33,11 +33,8 @@ class UpdatePasswordView(APIView):
     
     def put(self,request,*args,**kwargs):
         self.object= self.get_object()
-        data = {
-            "old_password": request.data["old_password"],
-            "new_password": request.data["new_password"]
-        }
-        serializer = ChangePassworSerializer(data=data)
+      
+        serializer = ChangePassworSerializer(data=request.data)
 
         if serializer.is_valid():
             old_password =serializer.data.get("old_password")
