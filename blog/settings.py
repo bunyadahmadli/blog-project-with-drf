@@ -24,6 +24,7 @@ SECRET_KEY = '87(s0^y&^i@wg%qp3a$5fpa)ps3x8x&91#zf=)dg8q_(t4g(vb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 REST_FRAMEWORK = {
@@ -32,9 +33,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'TEST_REQUEST_RENDERER_CLASSES': [
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer'
+    ],
     'DEFAULT_THROTTLE_RATES': {
         'registerthrottle': '5/min',
-    }
+    },
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 SIMPLE_JWT={
