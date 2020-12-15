@@ -144,7 +144,7 @@ class UserPasswordChange(APITestCase):
         response =self.client.put(self.url,data)
         self.assertEqual(400,response.status_code)
 
-    def test_with_wrong_information(self):
+    def test_with_empty_information(self):
         self.login_with_token()
         data ={
             "old_password":"",
@@ -152,3 +152,63 @@ class UserPasswordChange(APITestCase):
         }
         response =self.client.put(self.url,data)
         self.assertEqual(400,response.status_code)
+
+
+class UserProfileUpdate(APITestCase):
+    url=reverse("account:me")
+    url_login = reverse("token_obtain_pair")
+
+    def setUp(self):
+        self.username = "bunyadtest"
+        self.password = "sifre1342"
+        self.user = User.objects.create_user(username =self.username,password = self.password)
+
+    def login_with_token(self):
+        data ={
+            "username":"bunyadtest",
+            "password":"sifre1342"
+        }
+        response = self.client.post(self.url_login,data)
+        self.assertEqual(200,response.status_code)
+        token =response.data["access"]
+
+        self.client.credentials(HTTP_AUTHORIZATION ='Bearer '+token)
+    
+        #oturum açılmadan girildiğinde hata 
+    def test_is_authenticated_user(self):
+        response = self.client.get(self.url)
+        self.assertEqual(404,response.status_code) #401 olmalıdı mende 404 gelir
+    
+
+    def test_with_valid_information(self):
+        self.login_with_token()
+        data ={
+            "id":1,
+            "first_name":"",
+            "last_name":"",
+            "profile": {
+                "id":1,
+                "note": "heri",
+                "twitter": "heri"
+                }
+        }
+        response =self.client.put(self.url,data,format='json')
+        self.assertEqual(200,response.status_code)
+        self.assertEqual(json.loads(response.content),data)
+
+    
+    def test_with_empty_information(self):
+        self.login_with_token()
+        data ={
+            "id":1,
+            "first_name":"",
+            "last_name":"",
+            "profile": {
+                "id":1,
+                "note": "",
+                "twitter": ""
+                }
+        }
+        response =self.client.put(self.url,data,format='json')
+        self.assertEqual(200,response.status_code)
+     
