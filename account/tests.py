@@ -143,3 +143,12 @@ class UserPasswordChange(APITestCase):
         }
         response =self.client.put(self.url,data)
         self.assertEqual(400,response.status_code)
+
+    def test_with_wrong_information(self):
+        self.login_with_token()
+        data ={
+            "old_password":"",
+            "new_password":""
+        }
+        response =self.client.put(self.url,data)
+        self.assertEqual(400,response.status_code)
