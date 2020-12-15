@@ -66,7 +66,6 @@ class UserRegistrationTestCase(APITestCase):
         }
         response = self.client.post(self.url_login,data)
         self.assertEqual(200,response.status_code)
-        print(response.data["access"])
         token =response.data["access"]
 
         self.client.credentials(HTTP_AUTHORIZATION ='Bearer '+token)
@@ -95,4 +94,52 @@ class UserLogin(APITestCase):
 
     def test_user_empty_data(self):
         response = self.client.post(self.url_login,{"username":"","password":""})
+        self.assertEqual(400,response.status_code)
+
+
+
+class UserPasswordChange(APITestCase):
+    url=reverse("account:change-password")
+    url_login = reverse("token_obtain_pair")
+    def setUp(self):
+        self.username = "bunyadtest"
+        self.password = "sifre1342"
+        self.user = User.objects.create_user(username =self.username,password = self.password)
+
+    def login_with_token(self):
+        data ={
+            "username":"bunyadtest",
+            "password":"sifre1342"
+        }
+        response = self.client.post(self.url_login,data)
+        self.assertEqual(200,response.status_code)
+        token =response.data["access"]
+
+        self.client.credentials(HTTP_AUTHORIZATION ='Bearer '+token)
+        response = self.client.get(self.url_login)
+        
+
+    #oturum açılmadan girildiğinde hata 
+    def test_is_authenticated_user(self):
+        response = self.client.get(self.url)
+        self.assertEqual(401,response.status_code)
+
+    
+    def test_with_valid_information(self):
+        self.login_with_token()
+        data ={
+            "old_password":"sifre1342",
+            "new_password":"sifre134221"
+        }
+        response =self.client.put(self.url,data)
+        self.assertEqual(204,response.status_code)
+
+
+    def test_with_wrong_information(self):
+        self.login_with_token()
+        data ={
+            "old_password":"gsgsg",
+            "new_password":"sifre134221"
+        }
+        response =self.client.put(self.url,data)
         self.assertEqual(400,response.status_code)

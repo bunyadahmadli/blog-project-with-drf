@@ -39,7 +39,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.TemplateHTMLRenderer'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'registerthrottle': '15/hour',
+        'registerthrottle': '50/hour',
     },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
