@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwner
 from .models import Favourite
-from .serailizers import FavouriteListCreateSerializer
+from .serailizers import FavouriteListCreateSerializer ,FavouriteAPISerializer
 from .paginations import FavouritePagination
 # Create your views here.
 
@@ -16,3 +17,10 @@ class FavouriteListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self,serializer):
         serializer.save(user = self.request.user)
+
+
+class FavouriteAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Favourite.objects.all()
+    serializer_class = FavouriteAPISerializer
+    lookup_field ='pk'
+    permission_classes = [IsOwner]
