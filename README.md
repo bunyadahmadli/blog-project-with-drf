@@ -1,7 +1,7 @@
 # Blog Project <br>
 #Quick Start
 # install Python 3.7+<br>
-git pull https://github.com/bunyadahmadli/Django_Rest_Framework.git<br>
+git pull https://github.com/bunyadahmadli/blog-project-with-drf.git<br>
 pip install virtualenv<br>
 virtualenv venv <br>
 venv\Scripts\activate <br>
